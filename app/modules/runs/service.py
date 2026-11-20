@@ -6,10 +6,10 @@ from app.pipeline import execute
 from .repository import fetch, persist
 
 
-def run(source,book):
-    proof = manifest(source,book)
+def run(source,book,cap=None):
+    proof = manifest(source,book,cap)
     started = perf_counter()
-    result = execute(source,book)
+    result = execute(source,book,cap)
     created = datetime.now(timezone.utc).isoformat()
     proof.update(elapsed_ms=round((perf_counter()-started)*1000,2),created=created)
     result['manifest'] = proof
@@ -19,7 +19,8 @@ def run(source,book):
 
 def replay(run_id):
     old = fetch(run_id)
-    return run(old['source'],old['book'])
+    cap = json.loads(old['result'])['manifest']['parameters'].get('pot_limit')
+    return run(old['source'],old['book'],cap)
 
 
 def get(run_id):

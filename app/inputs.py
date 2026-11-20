@@ -31,6 +31,7 @@ class Source(BaseModel):
     data: CsvText | None = None
     data_base64: EncodedCsv | None = None
     demo: Literal['shift'] = 'shift'
+    pot_limit: int | None = Field(default=None, ge=0, le=1_000_000)
 
     def raw(self):
         return input_bytes(self.data, self.data_base64, SAMPLE_ROOT/'shift.csv')

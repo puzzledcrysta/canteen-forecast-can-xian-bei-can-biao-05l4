@@ -6,5 +6,5 @@ router = APIRouter()
 
 @router.post('/api/domain')
 def recalculate(source: Source):
-    result = stages(source.raw())
-    return {key:result[key] for key in ('accepted','rejected','domain_bad')}
+    result = stages(source.raw(),source.pot_limit)
+    return {key:result[key] for key in ('accepted','rejected','domain_bad','schedule')}

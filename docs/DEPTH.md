@@ -15,6 +15,7 @@
 | M5 备料清单 | 核对独立清单和各类差异 | `POST /api/reconcile` | `app/modules/reconcile/service.py` | `tests/test_reconcile.py` |
 | M6 餐线批次 | 打开历史批次并对原文件复跑 | `POST /api/runs` | `app/modules/runs/service.py` | `tests/test_runs.py` |
 | M7 排产复核 | 登记复核结论并下载证据 | `POST /api/review/{run_id}` | `app/modules/review/decisions.py` | `tests/test_review.py` |
+| M8 灶台排产 | 按本批可用锅次保底分锅并登记缺口 | `POST /api/schedule` | `app/modules/schedule/service.py` | `tests/test_schedule.py` |
 
 ## 陷阱登记
 
@@ -38,3 +39,7 @@
 ## 对账
 
 输入 = 计入 + 隔离 + 重传及版本替换 + 空白记录 + 重复表头。按业务键全外连接，缺失一侧与数值为零分别登记。逐笔差值与总差一致。
+
+## 排产
+
+备餐员按批填入可用锅次（缺省不限）。有需求的档口先各保一锅开餐，其余锅次按未满足需求比例以最大余数法分摊，同余数按业务键序，单档口不超过自身需求，剩余锅次记为空闲。外账按实际排产量对账，复核与导出沿用同一份排产。锅次上限计入批次指纹：同批重跑不新增排产，上限不同的批次各自留存、可分别查回。

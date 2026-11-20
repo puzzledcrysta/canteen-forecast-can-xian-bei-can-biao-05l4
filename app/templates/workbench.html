@@ -26,6 +26,10 @@
 <div class="kpi"><small>隔离</small><strong data-count="rejected">—</strong><span>条</span></div>
 <div class="kpi"><small>净差</small><strong data-count="delta">—</strong><span>份</span></div>
 <div class="kpi"><small>账差</small><strong data-count="mismatched">—</strong><span>条</span></div>
+<div class="kpi"><small>锅次上限</small><strong data-count="pot_limit">—</strong><span>锅</span></div>
+<div class="kpi"><small>需求锅次</small><strong data-count="demand_pots">—</strong><span>锅</span></div>
+<div class="kpi"><small>排产锅次</small><strong data-count="scheduled_pots">—</strong><span>锅</span></div>
+<div class="kpi"><small>缺口</small><strong data-count="gap">—</strong><span>份</span></div>
         </section>
         <div class="grid">
     <section class="panel source" aria-labelledby="input-title">
@@ -33,6 +37,7 @@
       <form id="source" class="panel__body">
         <div class="actions"><button type="submit" class="btn btn--primary">运行分位备餐</button>
         <button type="button" id="sample" class="btn">载入样例</button></div>
+        <label>本批可用锅次 <input id="pot-limit" type="number" min="0" max="1000000" step="1" inputmode="numeric" placeholder="不限"></label>
         <details><summary>导入来源与外部账</summary>
           <label>来源文件 <input id="source-file" type="file" accept=".csv,text/csv"></label>
           <textarea id="source-csv" aria-label="原始记录 CSV" rows="4"></textarea>

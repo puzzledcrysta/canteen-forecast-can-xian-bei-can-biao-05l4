@@ -83,7 +83,11 @@ function setRun(report) {
   byId('run-id').title = id;
   topExport.hidden = false;
   topExport.href = `/api/export/${id}`;
-  const values = {...result.counts, delta: result.book.delta, mismatched: result.book.mismatched};
+  const schedule = result.schedule;
+  byId('pot-limit').value = schedule.pot_limit ?? '';
+  const values = {...result.counts, delta: result.book.delta, mismatched: result.book.mismatched,
+    pot_limit: schedule.pot_limit ?? '不限', demand_pots: schedule.demand_pots,
+    scheduled_pots: schedule.scheduled_pots, gap: schedule.gap};
   for (const cell of document.querySelectorAll('[data-count]')) cell.textContent = values[cell.dataset.count];
   live.textContent = `批次 ${id.slice(0, 9)} · ${result.balanced ? '记录已对齐' : '记录数不符'}`;
 }
@@ -105,7 +109,9 @@ async function render() {
   try {
     let view, rows;
     if (stage === 'domain') {
-      view = [key, [`备餐份数 · ${settings.unit}`, 'amount', 'num'], line, ['明细依据', inspect]];
+      view = [key, [`预计需求 · ${settings.unit}`, 'demand', 'num'], [`实际排产 · ${settings.unit}`, 'amount', 'num'],
+              [`缺口 · ${settings.unit}`, 'gap', 'num'], ['锅次 排产/需求', row => `${row.scheduled_pots} / ${row.pots}`, 'num'],
+              line, ['明细依据', inspect]];
       rows = result.accepted;
     } else if (stage === 'quality') {
       view = [key, line, ['判定', row => tag(row.code)], ['说明', 'detail'], ['字段', raw]];
@@ -125,7 +131,7 @@ async function render() {
       rows = contract.accepted;
     } else if (stage === 'runs') {
       const runs = await query('/api/runs');
-      view = [['指纹','id'], ['创建 UTC','created'], ['操作', row => {
+      view = [['指纹','id'], ['锅次上限', row => row.pot_limit ?? '不限', 'num'], ['创建 UTC','created'], ['操作', row => {
         const current = row.id === id;
         const button = el('button',current ? '复算当前批' : '打开此批','btn');
         button.addEventListener('click', async () => {
@@ -216,6 +222,15 @@ byId('source').addEventListener('submit', async event => {
     const original = uploaded.get(control);
     if (original && text === original.text) candidate[`${name}_base64`] = encodeInput(original.bytes);
     else if (text.length || original) candidate[name] = text;
+  }
+  const limit = byId('pot-limit').value.trim();
+  if (limit !== '') {
+    const pots = Number(limit);
+    if (!Number.isInteger(pots) || pots < 0) {
+      notice('本批可用锅次须为不小于 0 的整数', true);
+      return;
+    }
+    candidate.pot_limit = pots;
   }
   action.disabled = true;
   ++renderEpoch;

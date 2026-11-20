@@ -24,4 +24,6 @@ def persist(run_id,source,book,result,created):
 
 def history():
     with connection() as db:
-        return [dict(row) for row in db.execute('SELECT id,created FROM runs ORDER BY created DESC,id DESC LIMIT 50')]
+        rows = db.execute('SELECT id,created,result FROM runs ORDER BY created DESC,id DESC LIMIT 50').fetchall()
+    return [{'id':row['id'],'created':row['created'],
+             'pot_limit':json.loads(row['result'])['manifest']['parameters'].get('pot_limit')} for row in rows]

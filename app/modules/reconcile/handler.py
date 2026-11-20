@@ -6,5 +6,5 @@ router = APIRouter()
 
 @router.post('/api/reconcile')
 def reconcile(source: Paired):
-    report = execute(source.raw(),source.ledger())
-    return {key:report[key] for key in ('book','counts','balanced')}
+    report = execute(source.raw(),source.ledger(),source.pot_limit)
+    return {key:report[key] for key in ('book','counts','balanced','schedule')}

@@ -8,7 +8,7 @@ router = APIRouter()
 
 @router.post('/api/runs')
 def create(source: Paired):
-    return run(source.raw(),source.ledger())
+    return run(source.raw(),source.ledger(),source.pot_limit)
 
 @router.get('/api/runs')
 def list_runs():
